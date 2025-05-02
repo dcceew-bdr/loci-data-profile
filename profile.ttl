@@ -1,0 +1,67 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prof: <http://www.w3.org/ns/dx/prof/>
+PREFIX role: <http://www.w3.org/ns/dx/prof/role/>
+PREFIX sdo: <https://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+<https://linked.data.gov.au/def/loci-dp>
+    a prof:Profile ;
+    dcterms:created "2021-04-01"^^xsd:date ;
+    dcterms:creator <http://orcid.org/0000-0002-8742-7730> ;
+    dcterms:modified "2025-05-02"^^xsd:date ;
+    dcterms:publisher <https://linked.data.gov.au/org/ga> ;
+    skos:definition "The Loc-I Data Profile is a profile of well-known Semantic Web spatial data, cataloguing and general-purpose models which creates a set of requirements that datasets can meet to ensure they are can be used for particular purposes such as cataloguing and spatial operations." ;
+    schema:name "Loc-I Data Profile" ;
+    prof:hasResource
+        [
+            schema:description "This profile's specification - human-readable" ;
+            dcterms:format "text/html" ;
+            schema:name "Specification" ;
+            prof:hasArtifact "https://linked.data.gov.au/def/loci-dp"^^xsd:anyURI ;
+            prof:hasRole role:specification ;
+        ] ,
+        [
+            dcterms:conformsTo <https://www.w3.org/TR/shacl/> ;
+            schema:description "This profile's SHACL validator" ;
+            dcterms:format "text/turtle" ;
+            schema:name "Validator" ;
+            prof:hasArtifact "https://linked.data.gov.au/def/loci-dp/validator"^^xsd:anyURI ;
+            prof:hasRole role:validation ;
+        ] ,
+        [                    
+            schema:description "Examples of valid and valid data"
+            schema:name "Examples" ;
+            dcterms:format "text/turtle" ;
+            prof:hasArtifact "https://github.com/dcceew-bdr/loci-data-profile/blob/main/examples"^^xsd:anyURI ;
+            prof:hasRole role:example ;
+        ] ,
+        [
+            schema:description "An online version control repository storing all the content of this profile" ;
+            schema:name "Profile Code Repository" ;
+            prof:hasArtifact "https://linked.data.gov.au/def/loci-dp/repo"^^xsd:anyURI ;
+            prof:hasRole role:repository ;
+        ] ;
+    prof:isProfileOf
+        <http://www.opengis.net/doc/IS/geosparql/1.1> ,
+        <https://schema.org> ,
+        <https://w3id.org/profile/vocpub> ;
+.
+
+<https://linked.data.gov.au/org/ga>
+    a sdo:Organization ;
+    sdo:name "Geoscience Australia" ;
+    sdo:url "https://www.ga.gov.au"^^xsd:anyURI ;
+.
+
+<http://orcid.org/0000-0002-8742-7730>
+    sdo:affiliation <https://kurrawong.ai> ;
+    sdo:email "nick@kurrawong.ai"^^xsd:anyURI ;
+    sdo:name "Nicholas J Car" ;
+.
+
+<https://kurrawong.ai>
+    a sdo:Organization ;
+    sdo:name "KurrawongAI" ;
+    sdo:url "https://kurrawong.ai"^^xsd:anyURI ;
+.
