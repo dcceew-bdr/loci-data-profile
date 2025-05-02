@@ -311,7 +311,7 @@
           <li><code>&lt;http://purl.org/NET/rdflicense/cc-by4.0&gt;</code></li>
         </ul>
         <p class="req">
-          <strong>D-parts</strong>: Each Dataset <em>MAY</em> indicate the <code>geo:FeatureCollection</code> instances that contain its features with the <code>schema:hasPart</code> predicate.
+          <strong>D-parts</strong>: Each Dataset <em>MAY</em> indicate the <code>geo:FeatureCollection</code> instances that it contains with the <code>schema:hasPart</code> predicate
         </p>
         <p class="note">
           This is the inverse of the mandatory requirement on <code>geo:FeatureCollection</code> instances to indicate the <code>schema:Dataset</code> instances they are part of and may be redundant to explicitly define but may also be useful.
@@ -320,80 +320,43 @@
       <section id="featurecollection">
         <h3>2.2 Feature Collection</h3>
         <p>
-          Loc-I matches the OGC API<sup><a href="#ogcapi">ref</a></sup> specification's method of arranging multiple <code>Feature</code> instances within a <code>Dataset</code> by grouping them into <code>FeatureCollection</code>. <code>FeatureCollection</code> instances are not spatial object themselves but are administrative (managed) collection (of <code>Feature</code> instances). They just require basic metadata, no spatial properties.
+          This profile matches the OGC Features API<sup><a href="#ogcapi">ref</a></sup>'s method of arranging multiple <em>features</em> instances <em>dataset</em> by grouping them into <code>collections</code>. GeoSPARQL's <code>geo:FeatureCollection</code> instances are not spatial object themselves but are administrative (managed) collections of <code>geo:Feature</code> instances. They require basic metadata and may also have spatial summary properties such as bounding boxes.
         </p>
         <p class="req">
-          <strong>FC-title</strong>: Each Feature Collection <em>MUST</em> have one and only one English title which is an English text literal, indicated using the <code>skos:prefLabel</code> predicate
+          <strong>FC-type</strong>: Each Feature Collection <em>MUST</em> be represented by an instance of the <code>geo:FeatureCollection</code> class
         </p>
         <p class="req">
-          <strong>FC-defn</strong>: Each Feature Collection <em>MUST</em> have one and only one English definition which is an English text literal, indicated using the <code>skos:definition</code> predicate
+          <strong>FC-name</strong>: Each Feature Collection <em>MUST</em> have one and only one name which is to be a text literal, indicated using the <code>schema:name</code> predicate
         </p>
         <p class="req">
-          <strong>FC-id</strong>: Each Feature Collection <em>MUST</em> have one and only one identifier, an <code>xsd:token</code>, indicated using the <code>dcterms:identifier</code> predicate. Note: this identifier must be unique within the Dataset it is part of. This uniqueness is not testable in SHACL.
+          <strong>FC-id</strong>: A Feature Collection <em>MAY</em> have non-IRI identifiers and, if one does, they <em>SHOULD</em> be indicated using the <code>schema:identifier</code> predicate. Custom datatypes <em>MAY</em> be used
         </p>
         <p class="req">
-          <strong>FC-part</strong>: Each Feature Collection <em>MUST</em> indicate that it is part of one and only one <code>dcat:Dataset</code> with use of the <code>dcterms:isPartOf</code> predicate
+          <strong>FC-part</strong>: Each Feature Collection <em>MUST</em> indicate that it is part of exactly one <code>schema:Dataset</code> instance with use of the <code>schema:isPartOf</code> predicate
+        </p>
+        <p class="req">
+          <strong>FC-spatial</strong>: A Feature Collection <em>MAY</em> indicate the total area that the features within it cover by using the <code>geo:hasGeometry</code> predicate or a sub property of it such as <code>geo:hasBoundingBox</code>
+        </p>
+        <p class="req">
+          <strong>FC-temporal</strong>: A Feature Collection <em>MAY</em> indicate the total temporal range that the features within it cover by using the <code>time:hasTime</code> predicate
+        </p>
+        <p class="req">
+          <strong>FC-parts</strong>: Each Feature Collection <em>MAY</em> indicate the <code>geo:Feature</code> instances that it contains with the <code>schema:hasPart</code> predicate
+        </p>
+        <p class="note">
+          This is the inverse of the mandatory requirement on <code>geo:Feature</code> instances to indicate the <code>geo:FeatureCollection</code> instances they are part of and may be redundant to explicitly define but may also be useful.
         </p>
       </section>
       <section id="feature">
         <h3>2.3 Feature</h3>
-        <p>
-          Features are the code <em>things</em> within Loc-I data. The are the spatial objects we care about and to which properties of interest are attached. Loc-I requirements for <code>Feature</code> isntances are that they have geometries - without which they can't be used as spatial objects - and are part of <code>FeatureCollection</code> instances. Each <code>Feature</code> instance must have an ID that is unique within a <code>FeatureCollection</code> so it can be used by systems taht cannot handle IRIs, such as OGC APIs, to refer to individuals.
+        <p class="req">
+          <strong>F-part</strong>: Each Feature <em>MUST</em> indicate that it is part of exactly one <code>geo:FeatureCollection</code> instance with use of the <code>schema:isPartOf</code> predicate
         </p>
         <p class="req">
-          <strong>F-part</strong>: Each Feature <em>MUST</em> indicate that it is part of at least <code>geo:FeatureCollection</code> with use of the <code>dcterms:isPartOf</code> predicate
+          <strong>F-id</strong>: A Feature <em>MAY</em> have non-IRI identifiers and, if one does, they <em>SHOULD</em> be indicated using the <code>schema:identifier</code> predicate. Custom datatypes <em>MAY</em> be used
         </p>
         <p class="req">
-          <strong>FC-id</strong>: Each Feature <em>MUST</em> have one and only one identifier, an <code>xsd:token</code>, indicated using the <code>dcterms:identifier</code> predicate. Note: this identifier must be unique within a Feature Collection. This uniqueness is not testable in SHACL
-        </p>
-        <p class="req">
-          <strong>FC-geometry</strong>: Each Feature Collection <em>MUST</em> have at least one geometry indicated using the <code>geo:hasGeometry</code> predicate
-        </p>
-      </section>
-      <section id="linkset">
-        <h3>2.4 Linkset</h3>
-        <p>
-          Loc-I <code>Dataset</code> instances may be joined by <code>Linkset</code> instances. A <code>Linkset</code> is a specialised form of a <code>Dataset</code> specifically created to join other <code>Dataset</code> instances and, as a result, has some mandatory properties to ensure joining is correctly specified.
-        </p>
-        <p>Note that because <code>Linkset</code> instances are also <code>Dataset</code> instances, all the <code>Dataset</code> rule apply to <code>Linkset</code> instances in addition to thiese specialised requirements.</p>
-        <p class="req">
-          <strong>L-m</strong>: Each Linkset <em>MUST</em> indicate at least one <code>rdf:Statement</code> by an inverse linking from that instance to the Linkset via the <code>dcterms:isPartOf</code> predicate
-        </p>
-        <p class="req">
-          <strong>L-st</strong>: Each Linkset <em>MUST</em> indicate one an only one subjects target Dataset with the predicate <code>void:subjectsTarget</code>
-        </p>
-        <p class="req">
-          <strong>L-ot</strong>: Each Linkset <em>MUST</em> indicate one an only one objects target Dataset with the predicate <code>void:objectsTarget</code>
-        </p>
-      </section>
-      <section id="statement">
-        <h3>2.5 Statement</h3>
-        <p>
-          The graph elements within <code>Linkset</code> instances that indicate <code>Feature</code>-level links between <code>Dataset</code> instances are <code>Statement</code> instances which are specialised forms of the standard <code>rdf:Statement</code> class.
-        </p>
-        <p class="req">
-          <strong>LS-subject</strong>: Each Statement <em>MUST</em> indicate one an only one subject with the predicate<code>rdf:subject</code>
-        </p>
-        <p class="req">
-          <strong>LS-predicate</strong>: Each Statement <em>MUST</em> indicate one an only one predicate with the predicate<code>rdf:predicate</code>
-        </p>
-        <p class="req">
-          <strong>LS-object</strong>: Each Statement <em>MUST</em> indicate one an only one object with the predicate<code>rdf:object</code>
-        </p>
-        <p class="req">
-          <strong>L-part</strong>: Each Statement <em>MUST</em> indicate that it is part of one and only one<code>void:Linkset</code> with use of the<code>dcterms:isPartOf</code> predicate
-        </p>
-        <p class="req">
-          <strong>LS-method</strong>: Each Statement <em>MUST</em> indicate that it was generated by one and only one method (a<code>prov:Plan</code>) with use of the<code>loci:hadGenerationMethod</code> predicate
-        </p>
-      </section>
-      <section id="bundle">
-        <h3>2.6 Bundle</h3>
-        <p>
-          Provenance for Loc-I datasets must be recorded using PROV-O, the Provenance Ontology<sup><a href="#prov">ref</a></sup>. The provenance statements are collected in <code>prov:Bundle</code> objects. EAch <code>Bundle</code> instance must include certain elements that allow users to understand how the <code>Dataset</code> that the <code>Bundle</code> is for was produced.
-        </p>
-        <p class="req">
-          <strong>B-mainactivity</strong>: Each Bundle <em>MUST</em> contain at least one <code>prov:Activity</code> indicated by a <code>dcterms:hasPart</code> predicate which must, in turn, indicate at least one <code>prov:Entity</code> by use of <code>prov:generated</code>
+          <strong>F-geometry</strong>: If a Feature indicates a geometry, <em>MUST</em> do so using the <code>geo:hasGeometry</code> predicate or sub properties of it
         </p>
       </section>
     </section>
