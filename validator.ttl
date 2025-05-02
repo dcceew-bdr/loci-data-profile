@@ -1,0 +1,292 @@
+PREFIX : <https://linked.data.gov.au/def/loci-dp/validator/>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX reg: <http://purl.org/linked-data/registry#>
+PREFIX sdo: <https://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+
+<https://linked.data.gov.au/def/loci-dp>
+    a prof:Profile ;
+    schema:dateCreated "2021-04-01"^^xsd:date ;
+    schema:creator <http://orcid.org/0000-0002-8742-7730> ;
+    schema:dateModified "2025-05-02"^^xsd:date ;
+    schema:publisher <https://linked.data.gov.au/org/ga> ;
+    schema:name "The Loc-I Data Profile SHACL validator." ;
+    schema:name "Loc-I Data Profile Validator" ;
+    schema:hasPart
+        :Requirement-D-title ,
+        :Requirement-D-defn ,
+.
+
+<https://linked.data.gov.au/org/ga>
+    a sdo:Organization ;
+    sdo:name "Geoscience Australia" ;
+    sdo:url "https://www.ga.gov.au"^^xsd:anyURI ;
+.
+
+<http://orcid.org/0000-0002-8742-7730>
+    sdo:affiliation <https://kurrawong.ai> ;
+    sdo:email "nick@kurrawong.ai"^^xsd:anyURI ;
+    sdo:name "Nicholas J Car" ;
+.
+
+<https://kurrawong.ai>
+    a sdo:Organization ;
+    sdo:name "KurrawongAI" ;
+    sdo:url "https://kurrawong.ai"^^xsd:anyURI ;
+.
+
+:Requirement-D-name
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-name: Each Dataset _MUST_ have one and only one English title which is an English text literal, indicated using the `dcterms:title` property"@en ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype rdf:langString ;
+        sh:languageIn ("en") ;
+    ]
+.
+
+:Requirement-D-desc
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-desc: Each Dataset _MUST_ have one and only one English definition which is an English text literal, indicated using the `dcterms:description` property"@en ;
+    sh:property [
+        sh:path dcterms:description ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype rdf:langString ;
+        sh:languageIn ("en") ;
+    ]
+.
+
+:Requirement-D-id
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-id: Each Dataset _MUST_ have one and only one identifier, an `xsd:token`, indicated using the `dcterms:identifier` property. Note: this identifier _MUST_ be unique among Loc-I Datasets. This uniqueness is not testable in SHACL."@en ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:token ;
+    ]
+.
+
+:Requirement-D-created
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-created: Each Dataset _MUST_ have one and only one created date, an `xsd:date`, `xsd:dateTime` or `xsd:dateTimeStamp` value, indicated using the `dcterms:created` property"@en ;
+    sh:property [
+        sh:path dcterms:created ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:or (
+            [ sh:datatype xsd:dateTime ]
+            [ sh:datatype xsd:date ]
+            [ sh:datatype xsd:dateTimeStamp ]
+        ) ;
+    ]
+.
+
+:Requirement-D-modified
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-modified: Each Dataset _MUST_ have one and only one modified date, an `xsd:date`, `xsd:dateTime` or `xsd:dateTimeStamp` value, indicated using the `dcterms:modified` property"@en ;
+    sh:property [
+        sh:path dcterms:modified ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:or (
+            [ sh:datatype xsd:dateTime ]
+            [ sh:datatype xsd:date ]
+            [ sh:datatype xsd:dateTimeStamp ]
+        ) ;
+    ]
+.
+
+# agents
+:Requirement-D-creator
+	a sh:NodeShape ;
+    sh:targetClass dcat:Dataset ;
+	sh:property [
+		sh:path dcterms:creator ;
+        sh:minCount 1 ;
+		sh:description "Requirement D-creator: Each Dataset _MUST_ indicate one or more creator agents with the dcterms:publisher property, typed as an `sdo:Person`, `sdo:Organization` or `sdo:GovernmentOrganization`"@en ;
+        sh:or (
+            [ sh:class sdo:GovernmentOrganization ]
+            [ sh:class sdo:Organization ]
+            [ sh:class sdo:Person ]
+        ) ;
+	] ;
+.
+
+:Requirement-D-publisher
+	a sh:NodeShape ;
+    sh:targetClass dcat:Dataset ;
+	sh:property [
+		sh:path dcterms:publisher ;
+		sh:description "Requirement D-publisher: Each Dataset _MUST_ indicate at least one publisher agent with the `dcterms:publisher` property, typed as an `sdo:Organization` or `sdo:GovernmentOrganization`, that is registered by the AGLDWG within their Organisations register"@en ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:node [
+            sh:property [
+                sh:hasValue <https://linked.data.gov.au/org/> ;
+                sh:minCount 1 ;
+                sh:maxCount 1 ;
+                sh:nodeKind sh:IRI ;
+                sh:path reg:register
+            ] ;
+        ]
+	] ;
+.
+
+:Requirement-D-history
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-history: Each Dataset _MUST_ indicate that it is within a prof:Bundle by an instance of one being indicated with the `prov:asInBundle` property"@en ;
+    sh:property [
+        sh:path prov:asInBundle ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class prov:Bundle
+    ]
+.
+
+:Requirement-D-license
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-license: If a Dataset is derived from anotehr Dataset, it _SHOULD_ indicate that that other dataset, a general DCAT Dataset instnace, with a `prov:wasDerivedFrom` property"@en ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class dcat:Dataset
+    ]
+.
+
+:Requirement-D-parts
+	a sh:NodeShape ;
+	sh:targetClass dcat:Dataset ;
+    sh:message "Requirement D-parts: If a Dataset is derived from anotehr Dataset, it _SHOULD_ indicate that that other dataset, a general DCAT Dataset instnace, with a `prov:wasDerivedFrom` property"@en ;
+    sh:property [
+        sh:path prov:wasDerivedFrom ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class dcat:Dataset
+    ]
+.
+
+:Requirement-FC-name
+	a sh:NodeShape ;
+	sh:targetClass geo:FeatureCollection ;
+    sh:message "Requirement FC-title: Each Feature Collection _MUST_ have one and only one English title which is an English text literal, indicated using the `dcterms:title` property"@en ;
+    sh:property [
+        sh:path dcterms:title ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype rdf:langString ;
+        sh:languageIn ("en") ;
+    ]
+.
+
+:Requirement-FC-id
+	a sh:NodeShape ;
+	sh:targetClass geo:FeatureCollection ;
+    sh:message "Requirement FC-id: Each Feature Collection _MUST_ have one and only one identifier, an `xsd:token`, indicated using the `dcterms:identifier` property. Note: this identifier must be unique within the Dataset it is part of. This uniqueness is not testable in SHACL."@en ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:token ;
+    ]
+.
+
+:Requirement-FC-spatial
+	a sh:NodeShape ;
+	sh:targetClass geo:FeatureCollection ;
+    sh:message "Requirement FC-spatial: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
+    sh:property [
+        sh:path dcterms:isPartOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class dcat:Dataset
+    ]
+.
+
+:Requirement-FC-temporal
+	a sh:NodeShape ;
+	sh:targetClass geo:FeatureCollection ;
+    sh:message "Requirement FC-temporal: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
+    sh:property [
+        sh:path dcterms:isPartOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class dcat:Dataset
+    ]
+.
+
+:Requirement-FC-part
+	a sh:NodeShape ;
+	sh:targetClass geo:FeatureCollection ;
+    sh:message "Requirement FC-part: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
+    sh:property [
+        sh:path dcterms:isPartOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class dcat:Dataset
+    ]
+.
+
+:Requirement-FC-parts
+	a sh:NodeShape ;
+	sh:targetClass geo:FeatureCollection ;
+    sh:message "Requirement FC-parts: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
+    sh:property [
+        sh:path dcterms:isPartOf ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class dcat:Dataset
+    ]
+.
+
+
+:Requirement-F-part
+	a sh:NodeShape ;
+	sh:targetClass geo:Feature ;
+    sh:message "Requirement F-part: Each Feature _MUST_ indicate that it is part of at least `geo:FeatureCollection` with use of the `dcterms:isPartOf` property"@en ;
+    sh:property [
+        sh:path dcterms:isPartOf ;
+        sh:minCount 1 ;
+        sh:class geo:FeatureCollection
+    ]
+.
+
+:Requirement-F-id
+	a sh:NodeShape ;
+	sh:targetClass geo:Feature ;
+    sh:message "Requirement FC-id: Each Feature _MUST_ have one and only one identifier, an `xsd:token`, indicated using the `dcterms:identifier` property. Note: this identifier must be unique within a Feature Collection. This uniqueness is not testable in SHACL"@en ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:token ;
+    ]
+.
+
+:Requirement-F-geometry
+	a sh:NodeShape ;
+	sh:targetClass geo:Feature ;
+    sh:message "Requirement FC-geometry: Each Feature _MUST_ have at least one geometry indicated using the `geo:hasGeometry` property"@en ;
+    sh:property [
+        sh:path geo:hasGeometry ;
+        sh:minCount 1 ;
+        sh:Class geo:Geometry ;
+    ]
+.
