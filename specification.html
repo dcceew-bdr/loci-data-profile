@@ -296,7 +296,7 @@
           <strong>D-publisher</strong>: Each Dataset <em>MUST</em> indicate one or more agents with the <code>schema:publisher</code> predicate, typed as an <code>sdo:Person</code> or <code>sdo:Organization</code>
         </p>
         <p class="req">
-          <strong>D-history</strong>: Each Dataset <em>SHOULD</em> indicate how it was produced or its origin by use of one of the following predicates: <code>skos:historyNote</code>, <code>sdo:citation</code>, <code>prov:wasDerivedFrom</code>.
+          <strong>D-history</strong>: Each Dataset <em>SHOULD</em> indicate how it was produced or its origin by use of one of the following predicates: <code>skos:historyNote</code>, <code>sdo:citation</code>, <code>prov:wasDerivedFrom</code>
         </p>
         <p class="note">
           The first is to be used for a narrative history, the second for a link to a non-semantic source or an academic-style citation and the third for a link to a semantic resource from which this dataset was derived.
@@ -311,7 +311,7 @@
           <li><code>&lt;http://purl.org/NET/rdflicense/cc-by4.0&gt;</code></li>
         </ul>
         <p class="req">
-          <strong>D-parts</strong>: Each Dataset <em>MAY</em> indicate the <code>geo:FeatureCollection</code> instances that it contains with the <code>schema:hasPart</code> predicate
+          <strong>D-parts</strong>: Each Dataset <em>MAY</em> indicate any <code>geo:FeatureCollection</code> instances that it contains with the <code>schema:hasPart</code> predicate
         </p>
         <p class="note">
           This is the inverse of the mandatory requirement on <code>geo:FeatureCollection</code> instances to indicate the <code>schema:Dataset</code> instances they are part of and may be redundant to explicitly define but may also be useful.

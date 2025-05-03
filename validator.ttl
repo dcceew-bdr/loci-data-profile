@@ -1,17 +1,17 @@
 PREFIX : <https://linked.data.gov.au/def/loci-dp/validator/>
-PREFIX dcat: <http://www.w3.org/ns/dcat#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX reg: <http://purl.org/linked-data/registry#>
-PREFIX sdo: <https://schema.org/>
+PREFIX schema: <https://schema.org/>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX time: <http://www.w3.org/2006/time#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 
-<https://linked.data.gov.au/def/loci-dp>
-    a prof:Profile ;
+<https://linked.data.gov.au/def/loci-dp/validator>
+    a owl:Ontology ;
     schema:dateCreated "2021-04-01"^^xsd:date ;
     schema:creator <http://orcid.org/0000-0002-8742-7730> ;
     schema:dateModified "2025-05-02"^^xsd:date ;
@@ -19,72 +19,81 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     schema:name "The Loc-I Data Profile SHACL validator." ;
     schema:name "Loc-I Data Profile Validator" ;
     schema:hasPart
-        :Requirement-D-title ,
-        :Requirement-D-defn ,
+        :Requirement-D-name ,
+        :Requirement-D-desc ,
+        :Requirement-D-created ,
+        :Requirement-D-modified ,
+        :Requirement-D-creator ,
+        :Requirement-D-publisher ,
+        :Requirement-D-history ,
+        :Requirement-D-license ,
+        :Requirement-D-parts ,
+        :Requirement-FC-name ,
+        :Requirement-FC-part ,
+        :Requirement-FC-spatial ,
+        :Requirement-FC-temporal ,
+        :Requirement-FC-parts ,
+        :Requirement-F-part ,
+        :Requirement-F-geometry ;
 .
 
 <https://linked.data.gov.au/org/ga>
-    a sdo:Organization ;
-    sdo:name "Geoscience Australia" ;
-    sdo:url "https://www.ga.gov.au"^^xsd:anyURI ;
+    a schema:Organization ;
+    schema:name "Geoscience Australia" ;
+    schema:url "https://www.ga.gov.au"^^xsd:anyURI ;
 .
 
 <http://orcid.org/0000-0002-8742-7730>
-    sdo:affiliation <https://kurrawong.ai> ;
-    sdo:email "nick@kurrawong.ai"^^xsd:anyURI ;
-    sdo:name "Nicholas J Car" ;
+    schema:affiliation <https://kurrawong.ai> ;
+    schema:email "nick@kurrawong.ai"^^xsd:anyURI ;
+    schema:name "Nicholas J Car" ;
 .
 
 <https://kurrawong.ai>
-    a sdo:Organization ;
-    sdo:name "KurrawongAI" ;
-    sdo:url "https://kurrawong.ai"^^xsd:anyURI ;
+    a schema:Organization ;
+    schema:name "KurrawongAI" ;
+    schema:url "https://kurrawong.ai"^^xsd:anyURI ;
 .
 
 :Requirement-D-name
 	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-name: Each Dataset _MUST_ have one and only one English title which is an English text literal, indicated using the `dcterms:title` property"@en ;
+	sh:targetClass schema:Dataset ;
+    sh:message "Each Dataset MUST have one and only one name which is to be a text literal, indicated using the schema:name predicate" ;
     sh:property [
-        sh:path dcterms:title ;
+        sh:path schema:name ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:datatype rdf:langString ;
-        sh:languageIn ("en") ;
-    ]
+        sh:or (
+            [ sh:datatype rdf:langString ]
+            [ sh:datatype xsd:string ]
+        ) ;
+    ] ;
 .
 
 :Requirement-D-desc
 	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-desc: Each Dataset _MUST_ have one and only one English definition which is an English text literal, indicated using the `dcterms:description` property"@en ;
+	sh:targetClass schema:Dataset ;
+    sh:message "Each Dataset MUST have one and description which is to be a text literal, indicated using the schema:description predicate" ;
     sh:property [
-        sh:path dcterms:description ;
+        sh:path schema:description ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:datatype rdf:langString ;
-        sh:languageIn ("en") ;
-    ]
+        sh:or (
+            [ sh:datatype rdf:langString ]
+            [ sh:datatype xsd:string ]
+        ) ;
+    ] ;
 .
 
-:Requirement-D-id
-	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-id: Each Dataset _MUST_ have one and only one identifier, an `xsd:token`, indicated using the `dcterms:identifier` property. Note: this identifier _MUST_ be unique among Loc-I Datasets. This uniqueness is not testable in SHACL."@en ;
-    sh:property [
-        sh:path dcterms:identifier ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:datatype xsd:token ;
-    ]
-.
+# :Requirement-D-id
+# nothing to validate
 
 :Requirement-D-created
 	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-created: Each Dataset _MUST_ have one and only one created date, an `xsd:date`, `xsd:dateTime` or `xsd:dateTimeStamp` value, indicated using the `dcterms:created` property"@en ;
+	sh:targetClass schema:Dataset ;
+    sh:message "Requirement D-created: Each Dataset MUST have exactly one created date indicated using the schema:dateCreated predicate with a literal value of either xsd:date, xsd:dateTime or xsd:dateTimeStamp type" ;
     sh:property [
-        sh:path dcterms:created ;
+        sh:path schema:dateCreated ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:or (
@@ -97,10 +106,10 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 :Requirement-D-modified
 	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-modified: Each Dataset _MUST_ have one and only one modified date, an `xsd:date`, `xsd:dateTime` or `xsd:dateTimeStamp` value, indicated using the `dcterms:modified` property"@en ;
+	sh:targetClass schema:Dataset ;
+    sh:message "Requirement D-modified: Each Dataset MUST have exactly one created date indicated using the schema:dateModified predicate with a literal value of either xsd:date, xsd:dateTime or xsd:dateTimeStamp type" ;
     sh:property [
-        sh:path dcterms:modified ;
+        sh:path schema:dateModified ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:or (
@@ -111,148 +120,127 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     ]
 .
 
-# agents
 :Requirement-D-creator
 	a sh:NodeShape ;
-    sh:targetClass dcat:Dataset ;
+    sh:targetClass schema:Dataset ;
 	sh:property [
-		sh:path dcterms:creator ;
+		sh:path schema:creator ;
         sh:minCount 1 ;
-		sh:description "Requirement D-creator: Each Dataset _MUST_ indicate one or more creator agents with the dcterms:publisher property, typed as an `sdo:Person`, `sdo:Organization` or `sdo:GovernmentOrganization`"@en ;
+		sh:description "Requirement D-creator: Each Dataset MUST indicate one or more agents with the schema:creator predicate, typed as an schema:Person or schema:Organization" ;
         sh:or (
-            [ sh:class sdo:GovernmentOrganization ]
-            [ sh:class sdo:Organization ]
-            [ sh:class sdo:Person ]
+            [ sh:class schema:Organization ]
+            [ sh:class schema:Person ]
         ) ;
 	] ;
 .
 
 :Requirement-D-publisher
 	a sh:NodeShape ;
-    sh:targetClass dcat:Dataset ;
+    sh:targetClass schema:Dataset ;
 	sh:property [
-		sh:path dcterms:publisher ;
-		sh:description "Requirement D-publisher: Each Dataset _MUST_ indicate at least one publisher agent with the `dcterms:publisher` property, typed as an `sdo:Organization` or `sdo:GovernmentOrganization`, that is registered by the AGLDWG within their Organisations register"@en ;
+		sh:path schema:publisher ;
+		sh:description "Requirement D-publisher: Each Dataset MUST indicate one or more agents with the schema:publisher predicate, typed as an schema:Person or schema:Organization" ;
         sh:minCount 1 ;
-        sh:nodeKind sh:IRI ;
-        sh:node [
-            sh:property [
-                sh:hasValue <https://linked.data.gov.au/org/> ;
-                sh:minCount 1 ;
-                sh:maxCount 1 ;
-                sh:nodeKind sh:IRI ;
-                sh:path reg:register
-            ] ;
-        ]
+        sh:or (
+            [ sh:class schema:Organization ]
+            [ sh:class schema:Person ]
+        ) ;
 	] ;
 .
 
 :Requirement-D-history
 	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-history: Each Dataset _MUST_ indicate that it is within a prof:Bundle by an instance of one being indicated with the `prov:asInBundle` property"@en ;
-    sh:property [
-        sh:path prov:asInBundle ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:class prov:Bundle
-    ]
+	sh:targetClass schema:Dataset ;
+    sh:message "Requirement D-history: Each Dataset SHOULD indicate how it was produced or its origin by use of one of the following predicates: skos:historyNote, schema:citation, prov:wasDerivedFrom" ;
+    sh:or (
+        :provenance-properties-01
+        :provenance-properties-02
+        :provenance-properties-04
+    ) ;
+    sh:severity sh:Warning ;
 .
 
 :Requirement-D-license
 	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-license: If a Dataset is derived from anotehr Dataset, it _SHOULD_ indicate that that other dataset, a general DCAT Dataset instnace, with a `prov:wasDerivedFrom` property"@en ;
+	sh:targetClass schema:Dataset ;
+    sh:message "Requirement D-license: Each Dataset MUST indicate a license that defines conditions for its use with the schema:license predicate with the value indicated coming from either the RDF Licenses dataset or being locally-defined odrl:Policy instance" ;
     sh:property [
-        sh:path prov:wasDerivedFrom ;
+        sh:path schema:license ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:class dcat:Dataset
+        sh:nodeKind sh:IRI ;
     ]
 .
 
 :Requirement-D-parts
 	a sh:NodeShape ;
-	sh:targetClass dcat:Dataset ;
-    sh:message "Requirement D-parts: If a Dataset is derived from anotehr Dataset, it _SHOULD_ indicate that that other dataset, a general DCAT Dataset instnace, with a `prov:wasDerivedFrom` property"@en ;
+	sh:targetClass schema:Dataset ;
+    sh:message "Requirement D-parts: Each Dataset MAY indicate any geo:FeatureCollection instances that it contains with the schema:hasPart predicate" ;
     sh:property [
-        sh:path prov:wasDerivedFrom ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:class dcat:Dataset
+        sh:path schema:hasPart ;
+        sh:class geo:FeatureCollection ;
     ]
 .
 
 :Requirement-FC-name
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-title: Each Feature Collection _MUST_ have one and only one English title which is an English text literal, indicated using the `dcterms:title` property"@en ;
+    sh:message "Each Feature Collection MUST have one and only one name which is to be a text literal, indicated using the schema:name predicate" ;
     sh:property [
-        sh:path dcterms:title ;
+        sh:path schema:name ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:datatype rdf:langString ;
-        sh:languageIn ("en") ;
-    ]
+        sh:or (
+            [ sh:datatype rdf:langString ]
+            [ sh:datatype xsd:string ]
+        ) ;
+    ] ;
 .
 
-:Requirement-FC-id
+# :Requirement-FC-id
+# nothing to test
+
+:Requirement-FC-part
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-id: Each Feature Collection _MUST_ have one and only one identifier, an `xsd:token`, indicated using the `dcterms:identifier` property. Note: this identifier must be unique within the Dataset it is part of. This uniqueness is not testable in SHACL."@en ;
+    sh:message "Requirement FC-part: Each Feature Collection MUST indicate that it is part of exactly one schema:Dataset instance with use of the schema:isPartOf predicate" ;
     sh:property [
-        sh:path dcterms:identifier ;
+        sh:path schema:isPartOf ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:datatype xsd:token ;
-    ]
+        sh:class schema:Dataset
+    ] ;
 .
 
 :Requirement-FC-spatial
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-spatial: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
+    sh:message "Requirement FC-spatial: A Feature Collection MAY indicate the total area that the features within it cover by using the geo:hasGeometry predicate or a sub property of it such as geo:hasBoundingBox" ;
     sh:property [
-        sh:path dcterms:isPartOf ;
-        sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:class dcat:Dataset
-    ]
+        sh:path ( geo:hasGeometry geo:hasBoundingBox geo:hasCentroid ) ;
+        sh:class geo:Geometry ;
+    ] ;
 .
 
 :Requirement-FC-temporal
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-temporal: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
+    sh:message "Requirement FC-temporal: A Feature Collection MAY indicate the total temporal range that the features within it cover by using the time:hasTime predicate" ;
     sh:property [
-        sh:path dcterms:isPartOf ;
-        sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:class dcat:Dataset
-    ]
-.
-
-:Requirement-FC-part
-	a sh:NodeShape ;
-	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-part: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
-    sh:property [
-        sh:path dcterms:isPartOf ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:class dcat:Dataset
-    ]
+        sh:path time:hasTime ;
+    ] ;
+    sh:class time:TemporalEntity ;
 .
 
 :Requirement-FC-parts
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-parts: Each Feature Collection _MUST_ indicate that it is part of one and only one `dcat:Dataset` with use of the `dcterms:isPartOf` property"@en ;
+    sh:message "Requirement FC-parts: Each Feature Collection MAY indicate the geo:Feature instances that it contains with the schema:hasPart predicate" ;
     sh:property [
-        sh:path dcterms:isPartOf ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:class dcat:Dataset
+        sh:path schema:hasPart ;
+        sh:class geo:Feature
     ]
 .
 
@@ -260,33 +248,52 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 :Requirement-F-part
 	a sh:NodeShape ;
 	sh:targetClass geo:Feature ;
-    sh:message "Requirement F-part: Each Feature _MUST_ indicate that it is part of at least `geo:FeatureCollection` with use of the `dcterms:isPartOf` property"@en ;
+    sh:message "Requirement F-part: Each Feature MUST indicate that it is part of exactly one geo:FeatureCollection instance with use of the schema:isPartOf predicate" ;
     sh:property [
-        sh:path dcterms:isPartOf ;
+        sh:path schema:isPartOf ;
         sh:minCount 1 ;
+        sh:maxCount 1 ;
         sh:class geo:FeatureCollection
     ]
 .
 
-:Requirement-F-id
-	a sh:NodeShape ;
-	sh:targetClass geo:Feature ;
-    sh:message "Requirement FC-id: Each Feature _MUST_ have one and only one identifier, an `xsd:token`, indicated using the `dcterms:identifier` property. Note: this identifier must be unique within a Feature Collection. This uniqueness is not testable in SHACL"@en ;
-    sh:property [
-        sh:path dcterms:identifier ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:datatype xsd:token ;
-    ]
-.
+# :Requirement-F-id
+# nothing to test
 
 :Requirement-F-geometry
 	a sh:NodeShape ;
 	sh:targetClass geo:Feature ;
-    sh:message "Requirement FC-geometry: Each Feature _MUST_ have at least one geometry indicated using the `geo:hasGeometry` property"@en ;
+    sh:message "Requirement FC-geometry: If a Feature indicates a geometry, MUST do so using the geo:hasGeometry predicate or sub properties of it" ;
     sh:property [
-        sh:path geo:hasGeometry ;
+        sh:path ( geo:hasGeometry geo:hasDefaultGeometry geo:hasBoundingBox geo:hasCentroid ) ;
         sh:minCount 1 ;
         sh:Class geo:Geometry ;
     ]
+.
+
+:provenance-properties-01
+    a sh:PropertyShape ;
+    sh:path prov:wasDerivedFrom ;
+    sh:minCount 1 ;
+    sh:nodeKind sh:IRI ;
+.
+
+:provenance-properties-02
+    a sh:PropertyShape ;
+    sh:path schema:citation ;
+    sh:minCount 1 ;
+    sh:or (
+        [ sh:datatype xsd:anyURI ]
+        [ sh:datatype xsd:string ]
+    ) ;
+.
+
+:provenance-properties-04
+    a sh:PropertyShape ;
+    sh:path skos:historyNote ;
+    sh:minCount 1 ;
+    sh:or (
+        [ sh:datatype rdf:langString ]
+        [ sh:datatype xsd:string ]
+    ) ;
 .
