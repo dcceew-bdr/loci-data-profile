@@ -1,4 +1,4 @@
-PREFIX : <https://linked.data.gov.au/def/loci-dp/validator/>
+PREFIX : <https://linked.data.gov.au/def/eia-dp/validator/>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
@@ -14,11 +14,12 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     a owl:Ontology ;
     schema:dateCreated "2021-04-01"^^xsd:date ;
     schema:creator <http://orcid.org/0000-0002-8742-7730> ;
-    schema:dateModified "2025-05-02"^^xsd:date ;
+    schema:dateModified "2025-05-19"^^xsd:date ;
     schema:publisher <https://linked.data.gov.au/org/ga> ;
-    schema:name "The Loc-I Data Profile SHACL validator." ;
+    schema:description "The Loc-I Data Profile SHACL validator." ;
     schema:name "Loc-I Data Profile Validator" ;
     schema:hasPart
+        :Requirement-D-exists ,
         :Requirement-D-name ,
         :Requirement-D-desc ,
         :Requirement-D-created ,
@@ -53,6 +54,16 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     a schema:Organization ;
     schema:name "KurrawongAI" ;
     schema:url "https://kurrawong.ai"^^xsd:anyURI ;
+.
+
+:Requirement-D-exists
+	a sh:NodeShape ;
+    sh:targetNode schema:Dataset ;
+    sh:property [
+        sh:path [ sh:inversePath rdf:type ] ;
+        sh:minCount 1 ;
+        sh:message "Each graph MUST have at least one Dataset instance" ;
+    ] ;
 .
 
 :Requirement-D-name
@@ -200,7 +211,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 # :Requirement-FC-id
 # nothing to test
 
-:Requirement-FC-part
+:Requirement-FC-part-of
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
     sh:message "Requirement FC-part: Each Feature Collection MUST indicate that it is part of exactly one schema:Dataset instance with use of the schema:isPartOf predicate" ;
@@ -208,7 +219,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         sh:path schema:isPartOf ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:class schema:Dataset
+        sh:class schema:Dataset ;
     ] ;
 .
 
@@ -230,8 +241,8 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     sh:property [
         sh:maxCount 1 ;
         sh:path time:hasTime ;
+        sh:class time:TemporalEntity ;
     ] ;
-    sh:class time:TemporalEntity ;
 .
 
 :Requirement-FC-parts
@@ -244,8 +255,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     ]
 .
 
-
-:Requirement-F-part
+:Requirement-F-part-of
 	a sh:NodeShape ;
 	sh:targetClass geo:Feature ;
     sh:message "Requirement F-part: Each Feature MUST indicate that it is part of exactly one geo:FeatureCollection instance with use of the schema:isPartOf predicate" ;
@@ -253,7 +263,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         sh:path schema:isPartOf ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
-        sh:class geo:FeatureCollection
+        sh:class geo:FeatureCollection ;
     ]
 .
 
@@ -265,7 +275,14 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 	sh:targetClass geo:Feature ;
     sh:message "Requirement FC-geometry: If a Feature indicates a geometry, MUST do so using the geo:hasGeometry predicate or sub properties of it" ;
     sh:property [
-        sh:path ( geo:hasGeometry geo:hasDefaultGeometry geo:hasBoundingBox geo:hasCentroid ) ;
+        sh:path [
+            sh:alternativePath (
+                geo:hasGeometry
+                geo:hasDefaultGeometry
+                geo:hasBoundingBox
+                geo:hasCentroid
+            ) ;
+        ] ;
         sh:minCount 1 ;
         sh:Class geo:Geometry ;
     ]
