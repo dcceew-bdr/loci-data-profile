@@ -183,16 +183,6 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     ]
 .
 
-:Requirement-D-parts
-	a sh:NodeShape ;
-	sh:targetClass schema:Dataset ;
-    sh:message "Requirement D-parts: Each Dataset MAY indicate any geo:FeatureCollection instances that it contains with the schema:hasPart predicate" ;
-    sh:property [
-        sh:path schema:hasPart ;
-        sh:class geo:FeatureCollection ;
-    ]
-.
-
 :Requirement-FC-name
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
@@ -214,13 +204,25 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 :Requirement-FC-part-of
 	a sh:NodeShape ;
 	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-part: Each Feature Collection MUST indicate that it is part of exactly one schema:Dataset instance with use of the schema:isPartOf predicate" ;
-    sh:property [
-        sh:path schema:isPartOf ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:class schema:Dataset ;
-    ] ;
+    sh:message "Requirement FC-part: Each Feature Collection MUST indicate that it is part of exactly one schema:Dataset instance with use of the schema:isPartOf predicate or the Dataset must indicate the Feature Collection is a part of it with schema:hasPart" ;
+    sh:or (
+        [
+            sh:property [
+                sh:path schema:isPartOf ;
+                sh:minCount 1 ;
+                sh:maxCount 1 ;
+                sh:class schema:Dataset ;
+            ]
+        ]
+        [
+            sh:property [
+                sh:path [ sh:inversePath schema:hasPart ] ;
+                sh:minCount 1 ;
+                sh:maxCount 1 ;
+                sh:class schema:Dataset ;
+            ]
+        ]
+    ) ;
 .
 
 :Requirement-FC-spatial
@@ -245,26 +247,28 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     ] ;
 .
 
-:Requirement-FC-parts
-	a sh:NodeShape ;
-	sh:targetClass geo:FeatureCollection ;
-    sh:message "Requirement FC-parts: Each Feature Collection MAY indicate the geo:Feature instances that it contains with the schema:hasPart predicate" ;
-    sh:property [
-        sh:path schema:hasPart ;
-        sh:class geo:Feature
-    ]
-.
-
 :Requirement-F-part-of
 	a sh:NodeShape ;
 	sh:targetClass geo:Feature ;
     sh:message "Requirement F-part: Each Feature MUST indicate that it is part of exactly one geo:FeatureCollection instance with use of the schema:isPartOf predicate" ;
-    sh:property [
-        sh:path schema:isPartOf ;
-        sh:minCount 1 ;
-        sh:maxCount 1 ;
-        sh:class geo:FeatureCollection ;
-    ]
+    sh:or (
+        [
+            sh:property [
+                sh:path schema:isPartOf ;
+                sh:minCount 1 ;
+                sh:maxCount 1 ;
+                sh:class geo:FeatureCollection ;
+            ]
+        ]
+        [
+            sh:property [
+                sh:path [ sh:inversePath schema:hasPart ] ;
+                sh:minCount 1 ;
+                sh:maxCount 1 ;
+                sh:class geo:FeatureCollection ;
+            ]
+        ]
+    ) ;
 .
 
 # :Requirement-F-id
