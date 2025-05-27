@@ -111,6 +111,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
             [ sh:datatype xsd:dateTime ]
             [ sh:datatype xsd:date ]
             [ sh:datatype xsd:dateTimeStamp ]
+            [ sh:datatype xsd:gYear ]
         ) ;
     ]
 .
