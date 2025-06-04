@@ -1,0 +1,46 @@
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX schema: <https://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+<http://example.com/dataset/1>
+    a schema:Dataset ;
+    schema:name "Test Dataset" ;
+    schema:description "A stub dataset that is valid according to the validator, used for testing" ;
+    schema:creator <https://linked.data.gov.au/org/dcceew> ;
+    schema:publisher <https://linked.data.gov.au/org/dcceew> ;
+    schema:dateCreated "2025-05-19"^^xsd:date ;
+    schema:dateModified "2025-05-19"^^xsd:date ;
+    schema:license <http://purl.org/NET/rdflicense/cc-by4.0> ;
+    schema:citation "Created for testing purposes" ;
+.
+
+
+<https://linked.data.gov.au/org/dcceew>
+    a schema:Organization ;
+    schema:name "DCCEEW" ;
+    schema:url "https://www.dcceew.gov.au"^^xsd:anyURI ;
+.
+
+<http://example.com/dataset/1/fc/1>
+    a geo:FeatureCollection ;
+    schema:name "Feature Collection 1" ;
+    schema:isPartOf <http://example.com/dataset/1> ;
+.
+
+<http://example.com/dataset/1/fc/1/f/1>
+    a geo:Feature ;
+    schema:name "Feature 1" ;
+    schema:isPartOf <http://example.com/dataset/1/fc/1> ;
+    geo:hasGeometry [
+        geo:asGeoJSON """{"type": "Polygon", "coordinates": [[ [148.75, -35.12], [148.75, -35.95], [149.425, -35.95], [149.425, -35.12], [148.75, -35.12] ]]}"""^^geo:geoJSON ;
+    ] ;
+.
+
+<http://example.com/dataset/1/fc/1/f/2>
+    a geo:Feature ;
+    schema:name "Feature 2" ;
+    schema:isPartOf <http://example.com/dataset/1/fc/1> ;
+    geo:hasGeometry [
+        geo:asWKT "POINT(1,1)"^^geo:wktLiteral ;
+    ] ;
+.
